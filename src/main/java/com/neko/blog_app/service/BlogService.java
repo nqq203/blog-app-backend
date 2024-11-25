@@ -41,6 +41,7 @@ public class BlogService {
       blog.setBlogTitle(blogTitle);
       blog.setBlogContent(blogContent);
       blog.setUser(user);
+      blog.setCreatedDate(new Date());
       return blogRepository.save(blog);
     } catch (Exception e) {
       logger.error("error in post a blog", e);
@@ -58,7 +59,9 @@ public class BlogService {
 
   public Page<Blog> findFeedsByUserId(Long userId, Pageable pageable) {
     try {
-      return blogRepository.findFeedsByIdUser(userId, pageable);
+      Page<Blog> a = blogRepository.findFeedsByIdUser(userId, pageable);
+      System.out.println("Hehehehe" + a.toString());
+      return a;
     } catch (Exception e) {
       throw new RuntimeException("Failed to fetch feed for user " + userId, e);
     }

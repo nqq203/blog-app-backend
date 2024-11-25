@@ -23,13 +23,14 @@ import com.neko.blog_app.common.CreatedResponse;
 import com.neko.blog_app.common.InternalServerError;
 import com.neko.blog_app.common.NotFoundResponse;
 import com.neko.blog_app.common.SuccessResponse;
+import com.neko.blog_app.dto.BlogDTO;
 import com.neko.blog_app.dto.PostBlogsDTO;
 import com.neko.blog_app.model.Blog;
 import com.neko.blog_app.service.BlogService;
 
 @RestController
 @RequestMapping("/api/blogs")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:4200")
 public class BlogController {
   @Autowired
   private BlogService blogService;
@@ -78,6 +79,7 @@ public class BlogController {
       Page<Blog> blogs;
 
       if (feeds) {
+        System.out.println("Find feeds: " + feeds);
         blogs = blogService.findFeedsByUserId(idUser, pageable);
       } else {
         blogs = blogService.findBlogsByUserId(idUser, pageable);
@@ -96,10 +98,11 @@ public class BlogController {
     try {
       ApiResponse response;
       Blog blog = blogService.findBlogById(idBlog);
+      BlogDTO blogDTO = new BlogDTO(blog);
       if (blog == null) {
         response = new NotFoundResponse("Not found blog detail");
       } else {
-        response = new SuccessResponse("Fetch blog detail successfully!", HttpStatus.OK, blog);
+        response = new SuccessResponse("Fetch blog detail successfully!", HttpStatus.OK, blogDTO);
       }
 
       return ResponseEntity.ok(response);

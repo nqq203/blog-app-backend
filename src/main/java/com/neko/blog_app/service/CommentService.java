@@ -6,6 +6,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.neko.blog_app.dto.CommentResponse;
+import com.neko.blog_app.dto.CommentsDTO;
 import com.neko.blog_app.model.Blog;
 import com.neko.blog_app.model.Comment;
 import com.neko.blog_app.model.User;
@@ -38,7 +41,6 @@ public class CommentService {
       comment.setUser(user);
       comment.setContent(content);
       comment.setCreatedAt(LocalDateTime.now());
-      comment.setDeletedAt(null);
 
       return commentRepository.save(comment);
     } catch (Exception e) {
@@ -47,14 +49,16 @@ public class CommentService {
   }
 
   @Transactional
-  public Page<Comment> getCommentByIdBlog(Long idBlog, Pageable pageable) {
+  public Page<CommentsDTO> getCommentByIdBlog(Long idBlog, Pageable pageable) {
     try {
       Blog blog = blogRepository.findById(idBlog).orElse(null);
       if (blog == null) {
         throw new IllegalStateException("Blog not found");
       }
-      return commentRepository.findByBlogAndDeletedAtIsNull(blog, pageable);
+      System.out.println("Qua dayyy");
+      return commentRepository.findByBlogAndDeletedAtIsNull(idBlog, pageable);
     } catch (Exception e) {
+      System.out.println("EEEEEEEEEEEEEEEEEEEEEEEEEEEEee" + e.getMessage());
       throw new RuntimeException("Failed to fetch comments for blog " + idBlog, e);
     }
   }

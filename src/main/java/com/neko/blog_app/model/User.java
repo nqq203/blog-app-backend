@@ -52,12 +52,12 @@ public class User implements UserDetails {
   @Column(unique = true)
   private String username;
 
+  @Column(unique = true)
+  private String email;
+
   @JsonIgnore
   @Column
   private String password;
-
-  @Column(unique = true)
-  private String email;
 
   @Column(name = "full_name")
   private String fullName;
@@ -65,12 +65,10 @@ public class User implements UserDetails {
   @Column(name = "avatar_url")
   private String avatarUrl;
 
+  @JsonIgnore
   @ManyToMany
-  @JoinTable(name = "user_followers", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "follower_id"))
+  @JoinTable(name = "user_followers", joinColumns = @JoinColumn(name = "follower_id"), inverseJoinColumns = @JoinColumn(name = "id_user"))
   private Set<User> followers = new HashSet<>();
-
-  @ManyToMany(mappedBy = "followers")
-  private Set<User> followings = new HashSet<>();
 
   @Column(name = "created_at")
   private LocalDate createdAt;
@@ -78,6 +76,7 @@ public class User implements UserDetails {
   @Column(name = "locked_at")
   private LocalDate lockedAt;
 
+  @JsonIgnore
   @OneToMany(mappedBy = "user")
   private List<Blog> blogs;
 

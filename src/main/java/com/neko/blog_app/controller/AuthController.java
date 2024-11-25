@@ -58,11 +58,11 @@ public class AuthController {
       ApiResponse response;
       if (email.equals("") && username.equals("")) {
         response = new BadRequest("Username or email is required!");
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
       }
       if (password.equals("")) {
         response = new BadRequest("Password is required!");
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
       }
 
 
@@ -70,7 +70,7 @@ public class AuthController {
       LoginResponse res = authService.login(identify, password);
       if (res == null) {
         response = new AuthFailureResponse("Wrong identify (username or email) or password!");
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
       }
       response = new SuccessResponse("Login successfully!", HttpStatus.OK, res);
       return ResponseEntity.status(HttpStatus.OK).body(response);

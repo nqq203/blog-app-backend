@@ -22,6 +22,8 @@ import com.neko.blog_app.common.InternalServerError;
 import com.neko.blog_app.common.NotFoundResponse;
 import com.neko.blog_app.common.SuccessResponse;
 import com.neko.blog_app.dto.CommentDTO;
+import com.neko.blog_app.dto.CommentResponse;
+import com.neko.blog_app.dto.CommentsDTO;
 import com.neko.blog_app.model.Comment;
 import com.neko.blog_app.service.CommentService;
 
@@ -52,14 +54,15 @@ public class CommentController {
   @GetMapping("")
   public ResponseEntity<ApiResponse> getComments(
       @RequestParam("id_blog") Long idBlog,
-      @RequestParam(value = "amount", defaultValue = "10") int size,
+      @RequestParam(value = "amount", defaultValue = "5") int size,
       @RequestParam(value = "pag", defaultValue = "0") int page,
-      @RequestParam(value = "sort", defaultValue = "created_at, desc") String sort) {
+      @RequestParam(value = "sort", defaultValue = "createdAt,desc") String sort) {
     ApiResponse response;
     try {
+      String[] sortParams = sort.split(",");
       Pageable pageable = PageRequest.of(page, size,
-          Sort.by(Sort.Direction.fromString(sort.split(",")[1]), sort.split(",")[0]));
-      Page<Comment> comments = commentService.getCommentByIdBlog(idBlog, pageable);
+          Sort.by(new Sort.Order(Sort.Direction.valueOf(sortParams[1].toUpperCase()), sortParams[0])));
+      Page<CommentsDTO> comments = commentService.getCommentByIdBlog(idBlog, pageable);
       response = new SuccessResponse("Get comments successfully", HttpStatus.OK, comments);
       return ResponseEntity.ok(response);
     } catch (IllegalArgumentException e) {
@@ -67,6 +70,7 @@ public class CommentController {
       return ResponseEntity.badRequest().body(response);
     } catch (RuntimeException e) {
       response = new InternalServerError("Internal server error while getting comments");
+      System.out.println("ERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR" + e.getMessage());
       return ResponseEntity.internalServerError().body(response);
     }
   }

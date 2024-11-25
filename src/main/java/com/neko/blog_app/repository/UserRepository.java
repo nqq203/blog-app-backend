@@ -8,16 +8,16 @@ import com.neko.blog_app.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-  @Query("SELECT u FROM User u WHERE u.idUser = ?1 AND u.lockedAt IS NULL")
+  @Query("SELECT u FROM User u WHERE u.idUser = :idUser AND u.lockedAt IS NULL")
   public User findByIdUser(Long idUser);
 
-  @Query("SELECT u FROM User u WHERE u.email = ?1 AND u.lockedAt IS NULL")
+  @Query("SELECT u FROM User u WHERE u.email = :email AND u.lockedAt IS NULL")
   public User findByEmail(String email);
 
-  @Query("SELECT u FROM User u WHERE u.username = ?1 AND u.lockedAt IS NULL")
+  @Query("SELECT u FROM User u WHERE u.username = :username AND u.lockedAt IS NULL")
   public User findByUsername(String username);
 
-  @Query(value = "SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END " +
-      "FROM User u WHERE (u.email = ?1 OR u.username = ?2) AND u.lockedAt IS NULL", nativeQuery = true)
+  @Query("SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END " +
+      "FROM User u WHERE (u.email = :email OR u.username = :username) AND u.lockedAt IS NULL")
   public boolean isExistingAccount(String email, String username);
 }

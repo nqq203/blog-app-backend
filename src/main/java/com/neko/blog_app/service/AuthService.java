@@ -40,6 +40,7 @@ public class AuthService {
   public LoginResponse login(String identify, String password) throws Exception {
     try {
       boolean isValidEmail = Identifier.isValidEmail(identify);
+      logger.info(" identify: ", identify);
 
       User user = isValidEmail ? userRepository.findByEmail(identify) : userRepository.findByUsername(identify);
       if (user == null) {

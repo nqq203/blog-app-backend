@@ -43,6 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
       // }
       
       String token = req.getHeader("Authorization");
+      System.out.println("token: " + token);
       if (token != null && token.startsWith("Bearer ")) {
         token = token.substring(7);
         boolean isBlackListed = authService.isTokenBlacklisted(token);

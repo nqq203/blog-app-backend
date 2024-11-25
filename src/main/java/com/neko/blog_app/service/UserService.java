@@ -29,6 +29,7 @@ public class UserService {
   public User createUser(String email, String username, String fullName, String password) throws Exception {
     try {
       boolean isExistingAccount = userRepository.isExistingAccount(email, username);
+
       if (isExistingAccount) {
         return null;
       }
@@ -42,9 +43,7 @@ public class UserService {
       user.setPassword(encodedPassword);
       user.setAvatarUrl("https://th.bing.com/th/id/OIP.b0QZlgB-xbYYDKt9V8QbDwHaHa?w=173&h=180&c=7&r=0&o=5&pid=1.7");
       user.setFollowers(new HashSet<>());
-      user.setFollowings(new HashSet<>());
       user.setCreatedAt(LocalDate.now());
-      user.setLockedAt(null);
 
       // Setting default roles or other properties
       user.setRoles(Arrays.asList("USER"));
@@ -61,7 +60,6 @@ public class UserService {
       return user != null ? user : null;
     } catch (Exception e) {
       logger.error("Load username failed: ", e);
-      ;
       throw e;
     }
   }
@@ -71,20 +69,17 @@ public class UserService {
     try {
       User currentUser = userRepository.findByIdUser(currentUserId);
       User followedUser = userRepository.findByIdUser(followedUserId);
-
+      System.out.println("Find both user and followed user successfully");
       if (currentUser != null && followedUser != null) {
-        boolean isFollowing = currentUser.getFollowings().contains(followedUser);
-        if (isFollowing) {
-          currentUser.getFollowings().remove(followedUser);
+        boolean isCurrentFollowing = followedUser.getFollowers().contains(currentUser);
+        if (isCurrentFollowing) {
           followedUser.getFollowers().remove(currentUser);
         } else {
-          currentUser.getFollowings().add(followedUser);
           followedUser.getFollowers().add(currentUser);
         }
 
-        userRepository.save(currentUser);
-        userRepository.save(followedUser);
-        return !isFollowing;
+        userRepository.saveAndFlush(followedUser);
+        return !isCurrentFollowing;
       } else {
         throw new NotFoundException("One or both users not found");
       }
