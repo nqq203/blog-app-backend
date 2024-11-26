@@ -1,10 +1,13 @@
 package com.neko.blog_app.controller;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
+// import org.hibernate.engine.jdbc.env.internal.LobCreationLogging_.logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,7 +19,9 @@ import com.neko.blog_app.common.ApiResponse;
 import com.neko.blog_app.common.BadRequest;
 import com.neko.blog_app.common.InternalServerError;
 import com.neko.blog_app.common.NotFoundException;
+import com.neko.blog_app.common.NotFoundResponse;
 import com.neko.blog_app.common.SuccessResponse;
+import com.neko.blog_app.dto.FollowerDTO;
 import com.neko.blog_app.dto.RegistrationDTO;
 import com.neko.blog_app.model.User;
 import com.neko.blog_app.service.UserService;
@@ -86,5 +91,22 @@ public class UserController {
     }
   }
 
-    
+  @GetMapping("/followers/{id_user}")
+  public ResponseEntity<ApiResponse> getFollowings(@PathVariable("id_user") Long idUser) {
+    ApiResponse response;
+    try {
+      User user = userService.findUserByIdUser(idUser);
+      if (user == null) {
+        response = new NotFoundResponse("User not found!");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+      }
+      List<FollowerDTO> followings = userService.getFollowingUsers(idUser);
+      response = new SuccessResponse("Gettting following users successfully", HttpStatus.OK, followings);
+      return ResponseEntity.ok(response);
+    } catch (Exception e) {
+      System.out.println("Error in get followings user service: " + e.getMessage());
+      response = new InternalServerError("Internal server error why get followings user");
+      return ResponseEntity.internalServerError().body(response);
+    }
+  } 
 }

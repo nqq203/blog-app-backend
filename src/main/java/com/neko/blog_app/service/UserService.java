@@ -3,12 +3,14 @@ package com.neko.blog_app.service;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.neko.blog_app.common.NotFoundException;
+import com.neko.blog_app.dto.FollowerDTO;
 import com.neko.blog_app.model.User;
 import com.neko.blog_app.repository.UserRepository;
 
@@ -87,4 +89,23 @@ public class UserService {
       throw new Exception("Error updating follow status: ", e);
     }
   }
+
+  @Transactional
+  public User findUserByIdUser(Long idUser) {
+    try {
+      User user = userRepository.findByIdUser(idUser);
+      return user != null ? user : null;
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to fetch user by id " + idUser, e);
+    }
+  }
+
+  @Transactional
+  public List<FollowerDTO> getFollowingUsers(Long idUser) {
+    try {
+      return userRepository.findFollwingList(idUser);
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to fetch following users for user " + idUser, e);
+    }
+  } 
 }

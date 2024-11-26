@@ -65,7 +65,6 @@ public class User implements UserDetails {
   @Column(name = "avatar_url")
   private String avatarUrl;
 
-  @JsonIgnore
   @ManyToMany
   @JoinTable(name = "user_followers", joinColumns = @JoinColumn(name = "follower_id"), inverseJoinColumns = @JoinColumn(name = "id_user"))
   private Set<User> followers = new HashSet<>();
